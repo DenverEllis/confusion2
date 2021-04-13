@@ -1,5 +1,9 @@
+// External Imports
 import { Navbar, NavbarBrand } from 'reactstrap';
 import {Component} from 'react';
+
+// Internal Imports
+import Menu from "./components/MenuComponent";
 import logo from './logo.svg';
 import './App.css';
 
@@ -12,6 +16,7 @@ class App extends Component{
 						<NavbarBrand href="/">Ristorante Con Fusion</NavbarBrand>
 					</div>
 				</Navbar>
+				<Menu/>
 			</div>
 		);
 	}

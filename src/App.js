@@ -1,5 +1,6 @@
 // External Imports
 import {Component} from 'react';
+import {BrowserRouter} from 'react-router-dom';
 
 // Internal Imports
 import Main from './components/MainComponent';

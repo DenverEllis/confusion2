@@ -4,6 +4,8 @@ import {Switch, Route, Redirect} from 'react-router-dom';
 import Home from "./HomeComponent";
 import Header from "./HeaderCompoent";
 import Menu from './MenuComponent';
+import DishDetail from "./DishdetailComponent";
+import About from "./AboutComponent";
 import Contact from "./ContactComponent";
 import Footer from "./FooterComponent";
 import { DISHES } from '../shared/dishes';
@@ -23,6 +25,21 @@ class Main extends Component {
     }
 
     render() {
+        const AboutPage = () => {
+            return (
+              <About leaders={this.state.leaders}/>
+            );
+        }
+
+        const DishWithId = ({match}) => {
+            return (
+                <DishDetail
+                    dish={this.state.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]}
+                    comments={this.state.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))}
+                />
+            );
+        };
+
         const HomePage = () => {
             return (
                 <Home
@@ -41,6 +58,8 @@ class Main extends Component {
                     <Route exact path='/menu' component={
                         () => <Menu dishes={this.state.dishes} />
                     }/>
+                    <Route path='/aboutus' component={AboutPage}/>
+                    <Route path='/menu/:dishId' component={DishWithId} />
                     <Route exact path='/contactus' component={Contact}/>
                     <Redirect to="/home" />
                 </Switch>

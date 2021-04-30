@@ -1,21 +1,146 @@
 import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import {
+    Card,
+    CardImg,
+    CardText,
+    CardBody,
+    CardTitle,
+    Breadcrumb,
+    BreadcrumbItem,
+    ModalHeader,
+    ModalBody, FormGroup, Label, Input, Button, Modal, FormFeedback, Col
+} from 'reactstrap';
 import {Link} from 'react-router-dom';
+import {Control, Form, Errors, actions} from "react-redux-form";
 
-function RenderDish(dish) {
-    console.log(dish.dish.image);
-    return(
-        <Card>
-            <CardImg top src={dish.dish.image} alt={dish.dish.name} />
-            <CardBody>
-                <CardTitle>{dish.dish.name}</CardTitle>
-                <CardText>{dish.dish.description}</CardText>
-            </CardBody>
-        </Card>
-    );
+
+import {Loading} from "./LoadingComponent";
+
+
+class CommentForm extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isModalOpen: false,
+            name: '',
+            touched: {
+                name: false
+            }
+        }
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
+    }
+
+    toggleModal() {this.setState({isModalOpen: !this.state.isModalOpen});}
+
+    handleInputChange(event) {
+        const target = event.target;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const name = target.name;
+        this.setState({[name]: value});
+    }
+
+    handleSubmit(values) {
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+        //this.props.resetCommentForm();
+        //event.preventDefault();
+    }
+
+    handleBlur = (field) => (evt) => {
+        this.setState({touched: {...this.state.touched, [field]: true}});
+    }
+
+    validate(name) {
+        const errors = {name: ''};
+        if (this.state.touched.name && name.length <= 2)
+            errors.name = 'Must be greater than 2 characters';
+        else if (this.state.touched.name && name.length > 15)
+            errors.name = 'Must be 15 characters or less';
+        
+        return errors;
+    }
+
+    render() {
+        const errors = this.validate(this.state.name);
+        return (
+            <div>
+                <Button outline onClick={this.toggleModal}><span className="fa fa-pencil fa-lg"></span> Submit Comment</Button>
+                <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+                    <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+                    <ModalBody>
+                        <Form model="comment" onSubmit={(values) => this.handleSubmit(values)}>
+                            <FormGroup>
+                                <Label htmlFor="rating">Rating</Label>
+                                <Input type="select" id="rating" name="rating" innerRef={(input) => this.rating = input}>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </Input>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label htmlFor="name">Your Name</Label>
+                                <Input type="text" id="name" name="name"
+                                       placeholder="Your Name"
+                                       value={this.state.name}
+                                       valid={errors.name === ''}
+                                       invalid={errors.name !== ''}
+                                       onBlur={this.handleBlur('name')}
+                                       onChange={this.handleInputChange} />
+                                <FormFeedback>{errors.name}</FormFeedback>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="comment">Your Comment</Label>
+                                <Input type="textarea" name="comment" id="comment" rows={6} innerRef={(input) => this.comment = input}/>
+                            </FormGroup>
+                            <Button type="submit" value="submit" color="primary">Submit</Button>
+                        </Form>
+                    </ModalBody>
+                </Modal>
+            </div>
+        );
+    }
 }
 
-function RenderComments(dish) {
+
+
+
+function RenderDish(props) {
+    if (props.isLoading) {
+        return(
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    } else if (props.errMess) {
+        return(
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        );
+    } else if (props.dish != null) {
+        return (
+            <Card>
+                <CardImg top src={props.dish.image} alt={props.dish.name}/>
+                <CardBody>
+                    <CardTitle>{props.dish.name}</CardTitle>
+                    <CardText>{props.dish.description}</CardText>
+                </CardBody>
+            </Card>
+        );
+    }
+}
+
+function RenderComments(dish, resetCommentForm) {
     console.log(dish);
     const comments = dish.comments.map((comments) => {
         return (
@@ -33,6 +158,7 @@ function RenderComments(dish) {
             <ul style={{padding: 5}} className={"list-unstyled"}>
                 {comments} <br/>
             </ul>
+            <CommentForm resetCommentForm={resetCommentForm}/>
         </div>
     );
 }
@@ -56,7 +182,7 @@ const DishDetail = (props) => {
                         <RenderDish dish={props.dish}/>
                     </div>
                     <div className="col-12 col-md-5 m-1">
-                        <RenderComments comments={props.comments}/>
+                        <RenderComments comments={props.comments} resetCommentForm={props.resetCommentForm}/>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, Row, FormFeedback} from "reactstrap";
+import {Breadcrumb, BreadcrumbItem, Button, FormGroup, Label, Input, Col, Row, FormFeedback} from "reactstrap";
 import {Link} from "react-router-dom"
+import {Control, Form, Errors, actions} from "react-redux-form";
 
 class Contact extends Component {
     constructor(props) {
@@ -34,13 +35,14 @@ class Contact extends Component {
         this.setState({[name]: value});
     }
 
-    handleSubmit(event) {
-        console.log('Current State is: ' + JSON.stringify(this.state));
-        alert('Current State is: ' + JSON.stringify(this.state));
-        event.preventDefault();
+    handleSubmit(values) {
+        console.log('Current State is: ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+        this.props.resetFeedbackForm();
     }
 
     handleBlur = (field) => (evt) => {this.setState({touched: { ...this.state.touched, [field]: true }});}
+
     validate(firstname, lastname, telnum, email) {
         const errors = {firstname: '',lastname: '',telnum: '',email: ''};
         if (this.state.touched.firstname && firstname.length < 3)
@@ -111,7 +113,7 @@ class Contact extends Component {
                         <h3>Send us your Feedback</h3>
                     </div>
                     <div className="col-12 col-md-9">
-                        <Form onSubmit={this.handleSubmit}>
+                        <Form model="feedback" onSubmit={(values) => this.handleSubmit(values)}>
                             <FormGroup row>
                                 <Label htmlFor="firstname" md={2}>First Name</Label>
                                 <Col md={10}>

@@ -8,7 +8,7 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     ModalHeader,
-    ModalBody, FormGroup, Label, Input, Button, Modal, FormFeedback, Col
+    ModalBody, FormGroup, Label, Input, Button, Modal, FormFeedback
 } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {Control, Form, Errors, actions} from "react-redux-form";
@@ -60,7 +60,7 @@ class CommentForm extends React.Component {
             errors.name = 'Must be greater than 2 characters';
         else if (this.state.touched.name && name.length > 15)
             errors.name = 'Must be 15 characters or less';
-        
+
         return errors;
     }
 

@@ -13,8 +13,9 @@ import {
 import {Link} from 'react-router-dom';
 import {Control, Form, Errors, actions} from "react-redux-form";
 
-
+//Internal Imports
 import {Loading} from "./LoadingComponent";
+import { baseUrl } from '../shared/baseUrl';
 
 
 class CommentForm extends React.Component {
@@ -130,7 +131,7 @@ function RenderDish(props) {
     } else if (props.dish != null) {
         return (
             <Card>
-                <CardImg top src={props.dish.image} alt={props.dish.name}/>
+                <CardImg top src={baseUrl + props.dish.image} alt={props.dish.name}/>
                 <CardBody>
                     <CardTitle>{props.dish.name}</CardTitle>
                     <CardText>{props.dish.description}</CardText>

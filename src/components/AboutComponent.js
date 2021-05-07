@@ -11,33 +11,29 @@ import {
     Media
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import {Fade, Stagger} from 'react-animation-components';
+
+//internal imports
 import {baseUrl} from "../shared/baseUrl";
 
-function RenderLeader({leader}) {
-    return(
-        <Media>
-            <Media left className="mr-5">
-                <Media object src={baseUrl + leader.image}/>
-            </Media>
-            <Media body>
-                <Media heading>
-                    {leader.name}
-                </Media>
-                <p>{leader.designation}</p>
-                <p>{leader.description}</p>
-            </Media>
-        </Media>
-    );
-}
+// function RenderLeader({leader}) {
+//     return(
+//         <Media>
+//             <Media left className="mr-5">
+//                 <Media object src={baseUrl + leader.image}/>
+//             </Media>
+//             <Media body>
+//                 <Media heading>
+//                     {leader.name}
+//                 </Media>
+//                 <p>{leader.designation}</p>
+//                 <p>{leader.description}</p>
+//             </Media>
+//         </Media>
+//     );
+// }
 
 function About(props) {
-    console.log(props.leaders.leaders);
-    const leaders = props.leaders.leaders.map((leader) => {
-        return (
-            <RenderLeader leader={leader}/>
-        );
-    });
-
     return(
         <div className="container">
             <div className="row">
@@ -93,9 +89,28 @@ function About(props) {
                     <h2>Corporate Leadership</h2>
                 </div>
                 <div className="col-12">
-                    <Media list>
-                        {leaders}
-                    </Media>
+                    <Stagger in>
+                        <Media list>
+                            {props.leaders.leaders.map((leader) => {
+                                return (
+                                    <Fade in>
+                                        <Media>
+                                            <Media left className="mr-5">
+                                                <Media object src={baseUrl + leader.image}/>
+                                            </Media>
+                                            <Media body>
+                                                <Media heading>
+                                                    {leader.name}
+                                                </Media>
+                                                <p>{leader.designation}</p>
+                                                <p>{leader.description}</p>
+                                            </Media>
+                                        </Media>
+                                    </Fade>
+                                )
+                            })}
+                        </Media>
+                    </Stagger>
                 </div>
             </div>
         </div>

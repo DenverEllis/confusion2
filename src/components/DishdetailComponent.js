@@ -45,8 +45,9 @@ class CommentForm extends React.Component {
     }
 
     handleSubmit(values) {
-        console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
+        // console.log('Current State is: ' + JSON.stringify(values));
+        // alert('Current State is: ' + JSON.stringify(values));
+        this.props.postComment(this.dishId, values.rating, values.author, values.comment)
         //this.props.resetCommentForm();
         //event.preventDefault();
     }
@@ -141,27 +142,27 @@ function RenderDish(props) {
     }
 }
 
-function RenderComments(dish, resetCommentForm) {
-    console.log(dish);
-    const comments = dish.comments.map((comments) => {
+function RenderComments({comments, postComment, dishId}) {
+    // console.log(dish);
+    if (comments != null) {
         return (
-            <div style={{padding: 5}}>
-                <li>{comments.comment}</li>
-                <li> -- {comments.author} {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comments.date)))}</li>
-                <br/>
+            <div className="col-12 m-1">
+                <h4>Comments</h4>
+                {comments.map(comment => {
+                    return (
+                        <li key={comment.id}>
+                            <p>{comment.comment}</p>
+                            <p>
+                                -- {comment.author} ,{" "}
+                                {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}
+                            </p>
+                        </li>
+                    )
+                })}
+                <CommentForm dishId={dishId} postComment={postComment}/>
             </div>
         )
-    });
-
-    return (
-        <div>
-            <h4>Comments</h4>
-            <ul style={{padding: 5}} className={"list-unstyled"}>
-                {comments} <br/>
-            </ul>
-            <CommentForm resetCommentForm={resetCommentForm}/>
-        </div>
-    );
+    }
 }
 
 const DishDetail = (props) => {
@@ -183,7 +184,7 @@ const DishDetail = (props) => {
                         <RenderDish dish={props.dish}/>
                     </div>
                     <div className="col-12 col-md-5 m-1">
-                        <RenderComments comments={props.comments} resetCommentForm={props.resetCommentForm}/>
+                        <RenderComments comments={props.comments} resetCommentForm={props.resetCommentForm} postComment={props.postComment}/>
                     </div>
                 </div>
             </div>
